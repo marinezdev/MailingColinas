@@ -1,0 +1,22 @@
+﻿@using System.Web.Configuration
+
+
+    @if (Session["IdUsuario"].ToString() == "2" || Session["IdUsuario"].ToString() == "45" || Session["IdUsuario"].ToString() == "5" || Session["IdUsuario"].ToString() == "23" || Session["IdUsuario"].ToString() == "40" || Session["IdUsuario"].ToString() == "46" || Session["IdUsuario"].ToString() == "47")
+    {
+        <li class="nav-item" id="opcCampania" style="margin-bottom: 26px;">
+            <a href="/Marketing/Index" style="background-color: @ViewBag.Resultado[0].Color ">
+                <i class="fas fa-podcast text-warning"></i>
+                <p>Campañas</p>
+            </a>
+         </li>
+    }
+
+  @if (Session["IdUsuario"].ToString() != "45")
+    {
+        <li class="nav-item" id="opcMark">
+            <a href="/Contactos/Index" style="background-color: @ViewBag.Resultado[0].Color ">
+                <i class="fas fa-address-card text-info"></i>
+                <p>Contactos</p>
+            </a>
+        </li>
+    }

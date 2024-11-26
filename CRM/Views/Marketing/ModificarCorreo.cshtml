@@ -1,0 +1,353 @@
+﻿@model CRM.Models.Models.MarketingCorreo
+@{
+    ViewBag.Title = "Modificar Correo";
+}
+
+
+<link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
+<!--link href="../assets/css/summernote.css" rel="stylesheet" /-->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<link href="~/assets/css/atlantis.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#opcMark').addClass("nav-item active submenu");
+        $('#mark').addClass("collapse show");
+        $('#sopcCampañas').addClass("active");
+        $('#m3').addClass('active');
+        $('#Espera').hide();
+
+
+        //$("#Boton1").click(function () {
+        //    $("form").attr("action", "/Marketing/ModificarCorreo").addClass('is-loading').prop('disabled', true);
+        //});
+
+        //$("#Boton2").click(function () {
+        //    $("form").attr("action", "/Marketing/ModificarCorreo").addClass('is-loading').prop('disabled', true);
+        //});
+
+
+    });
+
+</script>
+
+<style>
+
+    .responsiva {
+        max-width: 100%;
+        height: auto
+    }
+</style>
+
+<input type="hidden" id="IdConfiguracion" value="@Session["IdConfiguracion"].ToString()" />
+
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Modificar Correo</h4>
+    </div>
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="card">
+
+                <div id="Espera" class="card-body is-loading is-loading-lg">
+                    Card content
+                </div>
+
+                <div class="card-body">
+
+                    @Html.Partial("_MenuMarketing")
+
+                    <br />
+                    <div class="alert alert-info" role="alert" style="display:none;">
+                        Puede modificar el mensaje del correo hasta antes de iniciar la campaña; durante ella y terminada, se bloquerán las modificaciones.
+                    </div>
+
+                    <form id="formularioEmail" method="post" action="/Marketing/ModificarCorreo">
+                        <input type="hidden" id="IdCampaña" name="IdCampaña" value="@Request["IdCampaña"]" />
+
+                        <div class=" mail-wrapper bg-white" style="width:100%">
+                            <div class="page-content mail-content">
+                                <div class="email-head d-lg-flex d-block">
+                                    <h3>
+                                        <i class="fas fa-pen mr-1"></i>
+                                        Modificar asunto y/o mensaje de correo de la campaña
+                                    </h3>
+                                </div>
+                                <div class="email-compose-fields">
+                                    <div class="form-group row">
+                                        <label for="asunto" class="col-form-label col-md-1">Asunto</label>
+                                        <div class="col-md-11">
+                                            <input type="text" class="form-control" id="asunto" name="asunto" placeholder="Agregue el asunto" value="@Model.Asunto" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-secondary" role="alert" style="display:none;">
+                                    Si el correo será personalizado agregue <strong>[nombre]</strong> y/o <strong>[apellidos]</strong> para agregar el nombre del contacto al que se le enviara el mail
+                                    <br />
+                                    <small>Aplica para el contenido en el cuerpo del correo como para el titulo (subject) del correo</small>
+                                </div>
+                                <div class="alert alert-secondary" role="alert" style="display:none;">
+                                    Agregue la siguiente liga para que el contacto agende el evento en su calendario<br />
+                                    @CRM.Utilerias.CustomHelpers.CadenaAgenda(Request["IdCampaña"].ToString())
+                                </div>
+
+                                <div class="alert alert-secondary" role="alert" style="display:none;">
+                                    <a href="#" data-toggle="modal" data-target="#ModalPlantillas">Plantillas de correo</a>
+                                </div>
+
+                                <div class="email-editor">
+
+
+                                    <button id="customFileButton">
+                                        <span class="icon"></span>Subir Archivo
+                                    </button>
+
+                                    <input type="file" id="fileInput" style="display: none;">
+
+                                    <textarea id="editor"  name="contenido" placeholder="Cuerpo del correo">@Model.Cuerpo</textarea>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (ViewBag.EstadoActual == 1)
+                        {
+                            <div class="card-action label-align-center">
+                                <button id="Boton1" name="Boton1" value="BotonA" type="submit" class="btn btn-success">Terminar</button>
+                                &nbsp;
+                                <button id="Boton2" name="Boton2" value="BotonB" type="submit" class="btn btn-primary">Guardar y Probar el Correo Creado</button>
+                            </div>
+                        }
+
+                    </form>
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalPlantillas" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ModalLabel1">Plantillas de Correo</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="col-md-12">
+
+                    @CRM.Utilerias.CustomHelpers.ContenidoPlantillas()
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalVistaPrevia" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" style="background-color: gainsboro">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ModalLabel1">Vista Previa de la Plantilla</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <center>
+                    <div style="border:1px solid gray">
+
+
+                        <img id="imagenaver" src="" class="responsiva">
+
+                    </div>
+                </center>
+
+            </div>
+
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+<script src="../assets/js/plugin/bootstrap-toogle/bootstrap-toggle.min.js"></script>
+<script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+<script src="../assets/js/plugin/summernote/summernote-bs4.min.js"></script>
+<script src="../assets/js/plugin/summernote/summernote-es.js"></script>
+<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@4.0.10/js/froala_editor.pkgd.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<!------>
+
+<script>
+
+
+
+    $('#editor').summernote({
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Helvetica', 'Times new Roman'],
+        tabsize: 2,
+        height: 300,
+        lang: 'es-ES',
+        //toolbar: [
+        //    ['style', ['style']],
+        //    ['font', ['bold', 'underline', 'clear']],
+        //    ['fontname', ['fontname']],
+        //    ['fontsize', ['fontsize']],
+        //    ['color', ['color']],
+        //    ['para', ['ul', 'ol', 'paragraph']],
+        //    ['table', ['table']],
+        //    ['insert', ['link', 'picture', 'video']],
+        //    ['view', ['fullscreen', 'codeview', 'help']],
+        //]
+
+
+    });
+
+    $('#customFileButton').on('click', function () {
+        event.preventDefault();  // Previene el comportamiento predeterminado del botón
+        $('#fileInput').click();
+    });
+
+    $('#fileInput').on('change', function (event) {
+        var file = event.target.files[0];
+        uploadFiles(file);
+    });
+
+    function uploadFiles(file) {
+        Swal.fire({
+            title: 'Cargando...',
+            text: 'Por favor, espere mientras se carga el archivo.',
+            onBeforeOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        // Verifica si el archivo tiene una extensión .pdf
+        if (!file.name.toLowerCase().endsWith('.pdf')) {
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permiten archivos PDF. Por favor, seleccione un archivo PDF.',
+            });
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            url: '/DocumentosASAE/UploadFile',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                var link = 'https://' + response.link;
+
+                var linkElement = document.createElement('a');
+                linkElement.href = link;
+                linkElement.style = "display: inline-block; padding: 10px 20px; background-color: #33891D; color: white; text-align: center; text-decoration: none; font-size: 16px; border-radius: 5px;"
+                linkElement.textContent = "Ver archivo: " + file.name;
+
+                // Inserta el enlace en el editor Summernote
+                $('#editor').summernote('insertNode', linkElement);
+
+                // Cierra la alerta de carga y muestra una alerta de éxito
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'El archivo se ha cargado correctamente.'
+                });
+            },
+            error: function (error) {
+                console.error('Error al cargar el archivo:', error);
+
+                // Cierra la alerta de carga y muestra una alerta de error
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al cargar el archivo.'
+                });
+            }
+        });
+    }
+
+
+
+
+
+
+    //<!---------------->
+
+    $('#ModalVistaPrevia').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Botón que dispara el modal
+        var recipient = button.data('id')   // Extrae la info de los atributos data-*
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-title').text('New message to ' + recipient)
+        //modal.find('.imagenaver').src='../../assets/img/' + recipient
+        modal.find('.modal-body input').val(recipient)
+        $(".modal-body #imagenaver").attr("src", '../../assets/img/' + recipient);
+    })
+
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var form = document.getElementById("formularioEmail");
+
+        form.addEventListener("submit", function (event) {
+            var editor = document.getElementById("editor");
+
+            // Limpia el contenido del campo de texto de las etiquetas HTML y espacios en blanco
+            var contenidoSinEtiquetas = editor.value.replace(/<[^>]*>/g, "").trim();
+
+            // Valida si el campo contiene contenido real
+            if (contenidoSinEtiquetas === "") {
+                event.preventDefault();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'El campo de contenido es obligatorio.',
+                    text: 'Por favor, complétalo'
+                });
+            }
+        });
+    });
+
+</script>
